@@ -1,0 +1,35 @@
+name: Autograding Tests
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+  repository_dispatch:
+
+permissions:
+  checks: write
+  actions: read
+  contents: read
+
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Test
+      id: test
+      run: |
+        docker run --rm -v $(pwd):/workspace gdjs2/ucr-cs153-25winter-autograder:lab1
+        result=$(cat results.txt)
+        echo "result=$result" >> $GITHUB_OUTPUT
+
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        TEST_RESULTS: '${{ steps.test.outputs.result }}'
+      with:
+        runners: test
