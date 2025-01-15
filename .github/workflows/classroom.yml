@@ -28,7 +28,7 @@ jobs:
         echo "result=$result" >> $GITHUB_OUTPUT
 
     - name: Autograding Reporter
-      uses: classroom-resources/autograding-grading-reporter@v1
+      uses: gdjs2/autograding-grading-reporter@v1
       env:
         TEST_RESULTS: '${{ steps.test.outputs.result }}'
       with:
