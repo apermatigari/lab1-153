@@ -713,11 +713,11 @@ int waitpid(uint64 status, int pid, int options) {  //modeled after wait functio
         if (pid <= 0 || pp->pid == pid) {  
           if (pp->state == ZOMBIE) {  //if child enters zombie state (terminated)
             _pid = pp->pid;  // save pid
-             if (options == 0) {  
+             if (status && options == 0) {  
                 copyout(p->pagetable, status, (char *)&pp->xstate, 
                 sizeof(pp->xstate));  //option 0 means give the actual child exit status to the parent (run as normal)
               } 
-              else if (options == 2) {  
+              else if (status && options == 2) {  
                 int fake_status = 0x33;  
                 copyout(p->pagetable, status, (char *)&fake_status, 
                 sizeof(fake_status));   //option 2 means give a fake status to the parent
