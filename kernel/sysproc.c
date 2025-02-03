@@ -103,15 +103,13 @@ sys_waitpid(void)
   uint64 status; 
   int pid, options;
 
-
-  // I believe the return must correspond to: int waitpid(int *status, int pid, int options);
-
-    //gets the first argument which is the child exit status
+    //first argument represents memory address of where the exit status of child is stored, extracts the argument as a memory address
     argaddr(0, &status);
     
-    // takes second argument which makes waitpid() wait for the child pid
+    // takes second argument which is the PID of the child process to wait for
     argint(1, &pid);
-    // gets third argument defines the behavior of each waitpid() system call
+  
+    // gets third argument which is flags modifying behavior
     argint(2, &options);
    
     // if option is 1, return 0, meaning no waiting occurs, returns immediately
