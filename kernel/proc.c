@@ -713,15 +713,18 @@ int waitpid(int* status, int pid, int options) {  //modeled after wait function
         if (pid <= 0 || pp->pid == pid) {  
           if (pp->state == ZOMBIE) {  //if child enters zombie state (terminated)
             _pid = pp->pid;  // save pid
-             if (options == 0) {  
-                copyout(p->pagetable, (uint64)status, (char *)&pp->xstate, 
-                sizeof(pp->xstate));  //option 0 means give the actual child exit status to the parent (run as normal)
-              } 
-              else if (options == 2) {  
-                int fake_status = 0x33;  
-                copyout(p->pagetable, (uint64)status, (char *)&fake_status, 
-                sizeof(fake_status));   //option 2 means give a fake status to the parent
-              }
+
+            if (status != 0) {
+               if (options == 0) {  
+                  copyout(p->pagetable, (uint64)status, (char *)&pp->xstate, 
+                  sizeof(pp->xstate));  //option 0 means give the actual child exit status to the parent (run as normal)
+                } 
+                else if (options == 2) {  
+                  int fake_status = 0x33;  
+                  copyout(p->pagetable, (uint64)status, (char *)&fake_status, 
+                  sizeof(fake_status));   //option 2 means give a fake status to the parent
+                }
+            }
             freeproc(pp); // clean zombie process, frees mem and resources
             release(&pp->lock); // unlock child
             release(&wait_lock);  // unlocks process table
@@ -732,6 +735,12 @@ int waitpid(int* status, int pid, int options) {  //modeled after wait function
       }
     }
 
+    if (options == 1) { 
+      printf("OPTIONS=1\n");
+      release(&wait_lock);
+      return 0;  
+    }
+    
     // checks if parent has no children or was killed
     if(!havekids || killed(p)) {
       release(&wait_lock); // unlocks process table and returns -1
