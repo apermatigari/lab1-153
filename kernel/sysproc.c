@@ -100,25 +100,27 @@ sys_waitpid(void)
   // options - stores flags
   // status - store exit status
 
-  int pid, options, status; 
+  uint64 status; 
+  int pid, options;
 
 
-  //How do I use status in this?
   // I believe the return must correspond to: int waitpid(int *status, int pid, int options);
 
-    // WHAT I THINK IT SHOULD DO:
-    //gets the first argument which is the process to wait for, // add stores in pid
-  
-    // takes second argument which accounts for the behavior of waitpid, // stores in options
-   
-    // gets third argument which is the status?
-  
+    //gets the first argument which is the child exit status
+    argaddr(0, &status);
+    
+    // takes second argument which makes waitpid() wait for the child pid
+    argint(1, &pid);
+    // gets third argument defines the behavior of each waitpid() system call
+    argint(2, &options);
    
     // if option is 1, return 0, meaning no waiting occurs, returns immediately
     if (options == 1) {
+        printf("OPTIONS=1\n");
         return 0;
     // if 3, return -1, meaning invalid, returns an error
-    } else if (options == 3) {
+    } 
+    else if (options == 3) {
         return -1;
     }
 
