@@ -693,3 +693,22 @@ procdump(void)
     printf("\n");
   }
 }
+int waitpid(uint64 status, int pid, int options) {  //modeled after
+   struct proc *pp; 
+   int havekids = 0; //check to see if process has children
+   int _pid = -1; //stores pid of child if found otherwise it is -1
+   struct proc *p = myproc(); //get current process
+  
+   acquire(&wait_lock); //lock process table
+   for (;;) { //constantantly check for child processes
+       havekids = 0;
+       for (pp = proc; pp < &proc[NPROC]; pp++) { //iterate over processes to check for children
+           if (pp->parent == p) { //if process is child of p then lock the child process
+             acquire(&pp->lock);
+             havekids = 1; //child is found so make havekids = 1
+           }
+           release(&pp->lock); //unlock child process after checking
+       }
+   }
+   release(&wait_lock); //unlock process table
+}
