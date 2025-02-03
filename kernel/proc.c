@@ -694,7 +694,7 @@ procdump(void)
   }
 }
 
-int waitpid(uint64 status, int pid, int options) {  //modeled after wait function
+int waitpid(int* status, int pid, int options) {  //modeled after wait function
   struct proc *pp; 
   int havekids = 0; //check to see if process has children
   int _pid = -1; //stores pid of child if found otherwise it is -1
@@ -714,12 +714,12 @@ int waitpid(uint64 status, int pid, int options) {  //modeled after wait functio
           if (pp->state == ZOMBIE) {  //if child enters zombie state (terminated)
             _pid = pp->pid;  // save pid
              if (options == 0) {  
-                copyout(p->pagetable, status, (char *)&pp->xstate, 
+                copyout(p->pagetable, (uint64)status, (char *)&pp->xstate, 
                 sizeof(pp->xstate));  //option 0 means give the actual child exit status to the parent (run as normal)
               } 
               else if (options == 2) {  
                 int fake_status = 0x33;  
-                copyout(p->pagetable, status, (char *)&fake_status, 
+                copyout(p->pagetable, (uint64)status, (char *)&fake_status, 
                 sizeof(fake_status));   //option 2 means give a fake status to the parent
               }
             freeproc(pp); // clean zombie process, frees mem and resources
