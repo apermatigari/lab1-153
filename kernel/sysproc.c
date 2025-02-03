@@ -91,3 +91,42 @@ sys_uptime(void)
   release(&tickslock);
   return xticks;
 }
+
+uint64
+sys_waitpid(void)
+{
+  // declaring variables
+  // pid - stores process ID of child processes
+  // options - stores flags
+  // status - store exit status
+
+  int pid, options, status; 
+
+
+  //How do I use status in this?
+  // I believe the return must correspond to: int waitpid(int *status, int pid, int options);
+
+    // WHAT I THINK IT SHOULD DO:
+    //gets the first argument which is the process to wait for, // add stores in pid
+  
+    // takes second argument which accounts for the behavior of waitpid, // stores in options
+   
+    // gets third argument which is the status?
+  
+   
+    // if option is 1, return 0, meaning no waiting occurs, returns immediately
+    if (options == 1) {
+        return 0;
+    // if 3, return -1, meaning invalid, returns an error
+    } else if (options == 3) {
+        return -1;
+    }
+
+
+    // 0 and 2 are not checked explicitly because waitpid() will handle it
+    // options == 0 is default behavior, no need for a check
+    // 2 is valid, so it gets forwarded to waitpid()
+    // only filters 1 and 3 because they require an immediate action, the return
+   
+    return waitpid(status, pid, options);
+}
