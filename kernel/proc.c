@@ -701,6 +701,21 @@ int waitpid(int* status, int pid, int options) {  //modeled after wait function
   struct proc *p = myproc(); //get current process
   
   acquire(&wait_lock); //lock process table
+
+  if (pid > 0) {
+    int found = 0;
+    for (pp = proc; pp < &proc[NPROC]; pp++) {
+      if (pp->parent == p && pp->pid == pid) {
+        found = 1;
+        break;
+      }
+    }
+    if (!found) {  // If pid is not a child, return -1
+      release(&wait_lock);
+      return -1;
+    }
+  }
+
   for (;;) { //constantantly check for child processes
     havekids = 0;
     for (pp = proc; pp < &proc[NPROC]; pp++) { //iterate over processes to check for children
