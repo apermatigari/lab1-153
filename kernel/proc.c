@@ -693,7 +693,7 @@ procdump(void)
     printf("\n");
   }
 }
-int waitpid(uint64 status, int pid, int options) {  //modeled after
+int waitpid(uint64 status, int pid, int options) {  //modeled after wait function
    struct proc *pp; 
    int havekids = 0; //check to see if process has children
    int _pid = -1; //stores pid of child if found otherwise it is -1
