@@ -705,14 +705,16 @@ int waitpid(int* status, int pid, int options) {  //modeled after wait function
   // This check ensures that if a parent process calls waitpid, it is waiting for its actual children
   // requested to wait for a specific process, hence p > 0, p <= 0 means wait for any child process
   if (pid > 0) {
-    int matchingChild = 0; // used to find matching child
-    // iterates over process table
-    for (pp = proc; pp < &proc[NPROC]; pp++) {
+    int matchingChild = 0; // used to find if pid belongs to a child
+   
+    for (pp = proc; pp < &proc[NPROC]; pp++) {  // iterates over process table
+      
       // if the process pp is a child of the process and the child process mactches the pid, then pid is a valid child process
       if (pp->parent == p && pp->pid == pid) { 
         matchingChild = 1; 
       }
     }
+    // checks if the pid was a child, if not return -1 (means matchingChild is still 0)
     if (!matchingChild) { 
       release(&wait_lock); // unlock process table
       return -1; 
