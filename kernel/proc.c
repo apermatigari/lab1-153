@@ -713,7 +713,7 @@ int waitpid(int* status, int pid, int options) {  //modeled after wait function
         matchingChild = 1; 
       }
     }
-    if (!found) { 
+    if (!matchingChild) { 
       release(&wait_lock); // unlock process table
       return -1; 
     }
