@@ -711,11 +711,14 @@ int waitpid(uint64 status, int pid, int options) {  //modeled after wait functio
         // caller wants to wait for child process to exit (pid always greater than 0)
         // ensure that if pid is given, it only waits for that process
         if (pid <= 0 || pp->pid == pid) {  
-          if (pp->state == ZOMBIE) {  // checks if pp is in zombie state
-            _pid = pp->pid;  //store pid and return
-            return _pid;  
+          if (pp->state == ZOMBIE) {  //if child enters zombie state (terminated)
+            _pid = pp->pid;  
+            copyout(p->pagetable, status, (char *)&pp->xstate, sizeof(pp->xstate));  //sends the child process exit state back to the parent 
+              //if the parent has a valid memory location to hold it
+            return _pid;  //returns child process pid
           }  
         }
+
       }
       release(&pp->lock); //unlock child process after checking
     }
