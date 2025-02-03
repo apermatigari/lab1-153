@@ -739,11 +739,6 @@ int waitpid(int* status, int pid, int options) {  //modeled after wait function
       return -1;
     }
 
-    if (options == 1) {  
-      release(&wait_lock);
-      return 0;  
-    }
-
     sleep(p, &wait_lock); // put parent to sleep until child process changes state to avoid wasting CPU cycles
   }
 }
