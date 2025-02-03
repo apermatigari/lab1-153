@@ -128,5 +128,5 @@ sys_waitpid(void)
     // 2 is valid, so it gets forwarded to waitpid()
     // only filters 1 and 3 because they require an immediate action, the return
    
-    return waitpid((int*)status, pid, options);
+    return waitpid(status, pid, options);
 }
